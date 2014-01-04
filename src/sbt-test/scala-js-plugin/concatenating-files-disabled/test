@@ -1,0 +1,12 @@
+# First make sure they exists, this covers the fact that we might have
+# made a typeo in this test file
+
+> compile:managedResources
+$ exists target/scala-2.10/resource_managed/main/concatenating-files-disabled.js
+$ exists target/scala-2.10/resource_managed/main/concatenating-files-disabled.js.map
+> clean
+
+> set ScalaJSKeys.concatenateGeneratedFiles in (Compile, resourceGenerators) := false
+> compile:managedResources
+$ absent target/scala-2.10/resource_managed/main/concatenating-files-disabled.js
+$ absent target/scala-2.10/resource_managed/main/concatenating-files-disabled.js.map

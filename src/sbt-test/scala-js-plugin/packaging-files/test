@@ -1,0 +1,11 @@
+> package
+> extract-jar
+$ exists target/extracted/Test1.class
+$ exists target/extracted/Test1$.class
+$ exists target/extracted/Test2.class
+$ absent target/extracted/0002-Test1$.js
+$ absent target/extracted/0002-Test1$.js.map
+$ absent target/extracted/0002-Test2.js
+$ absent target/extracted/0002-Test2.js.map
+$ exists target/extracted/packaging-files.js
+$ exists target/extracted/packaging-files.js.map

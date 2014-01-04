@@ -1,0 +1,13 @@
+> compile
+$ absent target/scala-2.10/classes/0002-Test$.js
+$ absent target/scala-2.10/classes/0002-Test$.js.map
+
+$ copy-file changes/Test.scala Test.scala
+> compile
+$ exists target/scala-2.10/classes/0002-Test$.js
+$ exists target/scala-2.10/classes/0002-Test$.js.map
+
+$ delete Test.scala
+> compile
+$ absent target/scala-2.10/classes/0002-Test$.js
+$ absent target/scala-2.10/classes/0002-Test$.js.map

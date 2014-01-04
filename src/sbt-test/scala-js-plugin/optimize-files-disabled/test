@@ -1,0 +1,13 @@
+# First make sure they exists, this covers the fact that we might have
+# made a typeo in this test file
+
+> set ScalaJSKeys.optimize in (Compile, resourceGenerators) := true
+> compile:managedResources
+$ exists target/scala-2.10/resource_managed/main/optimize-files-disabled.min.js
+$ exists target/scala-2.10/resource_managed/main/optimize-files-disabled.min.js.map
+> clean
+
+> set ScalaJSKeys.optimize in (Compile, resourceGenerators) := false
+> compile:managedResources
+$ absent target/scala-2.10/resource_managed/main/optimize-files-disabled.min.js
+$ absent target/scala-2.10/resource_managed/main/optimize-files-disabled.min.js.map

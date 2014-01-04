@@ -1,0 +1,3 @@
+> compile
+$ exists target/scala-2.10/classes/0002-Test$.js
+$ exists target/scala-2.10/classes/0002-Test$.js.map
