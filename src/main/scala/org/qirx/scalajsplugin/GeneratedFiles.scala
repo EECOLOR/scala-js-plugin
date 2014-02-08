@@ -16,6 +16,8 @@ import sbt.richFile
 import sbt.FileFunction
 import sbt.FilesInfo
 import com.google.debugging.sourcemap.SourceMapGenerator
+import com.google.javascript.jscomp.SourceMap
+import java.io.StringWriter
 
 object GeneratedFiles {
 
@@ -23,7 +25,7 @@ object GeneratedFiles {
     sourceFiles: Seq[File], targetName: String,
     targetDirectory: File, cacheDir: File): (File, File) = {
 
-    // make sure the resourceManaged directory exists
+    // make sure the target directory exists
     IO.createDirectory(targetDirectory)
 
     val jsFile = targetDirectory / (targetName + ".js")
@@ -50,7 +52,6 @@ object GeneratedFiles {
   private def concat(sourceFiles: Seq[File], jsFile: File, jsSourceMapFile: File): Unit = {
 
     val jsOut = new PrintWriter(jsFile)
-    val jsSourceMapOut = new PrintWriter(jsSourceMapFile)
     val sourceMapGenerator = SourceMapGeneratorFactory.getInstance(SourceMapFormat.V3)
 
     var totalLineCount = 0
@@ -69,10 +70,10 @@ object GeneratedFiles {
     }
 
     jsOut.println("//@ sourceMappingURL=" + jsSourceMapFile.getName)
-
-    sourceMapGenerator.appendTo(jsSourceMapOut, jsFile.getName)
-
     jsOut.close()
+
+    val jsSourceMapOut = new PrintWriter(jsSourceMapFile)
+    sourceMapGenerator.appendTo(jsSourceMapOut, jsFile.name)
     jsSourceMapOut.close()
   }
 
@@ -124,14 +125,15 @@ object GeneratedFiles {
      * written directly in JS.
      * We generate a fake line-by-line source map for these on the fly
      */
+    sys.error("addFakeSourceMap disabled in GeneratedFiles")
     val sourceName = sourceFile.getPath
-        for (lineNumber <- 0 until lineCount) {
-          val sourceStartPos = new FilePosition(lineNumber, 0)
-          val startPos = new FilePosition(offset + lineNumber, 0)
-          val endPos = new FilePosition(offset + lineNumber + 1, 0)
+    for (lineNumber <- 0 until lineCount) {
+      val sourceStartPos = new FilePosition(lineNumber, 0)
+      val startPos = new FilePosition(offset + lineNumber, 0)
+      val endPos = new FilePosition(offset + lineNumber + 1, 0)
 
-          sourceMapGenerator.addMapping(sourceName, null,
-              sourceStartPos, startPos, endPos)
-        }
+      sourceMapGenerator.addMapping(sourceName, null,
+        sourceStartPos, startPos, endPos)
+    }
   }
 }

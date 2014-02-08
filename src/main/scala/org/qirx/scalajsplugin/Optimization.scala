@@ -10,7 +10,6 @@ trait Optimization {
   import ScalaJSPlugin.ScalaJSKeys.optimize
   import ScalaJSPlugin.ScalaJSKeys.optimizeFiles
   import ScalaJSPlugin.ScalaJSKeys.concatenateFiles
-  import ScalaJSPlugin.concatenateFilesTask
 
   lazy val optimizationSettings = optimizationSettingsIn(Compile)
 
@@ -27,10 +26,17 @@ trait Optimization {
       Seq(jsFile)
     },
 
+    target in optimizeFiles := resourceManaged.value,
+
     optimizeFiles := {
       val sourceFiles = (sources in optimizeFiles).value
-      val concat = optimizeFilesTask.value
-      concat(sourceFiles)
+      val s = streams.value
+      Optimizer.optimize(
+        sourceFiles,
+        targetName = moduleName.value + ".min",
+        targetDirectory = (target in optimizeFiles).value,
+        cacheDir = s.cacheDirectory / "optimize-files",
+        s.log)
     },
 
     resourceGenerators <+=
@@ -42,17 +48,4 @@ trait Optimization {
         else Def.task { Seq.empty[File] }
       }
   )
-
-  def optimizeFilesTask =
-    Def.task { sourceFiles: Seq[File] =>
-      val concat = concatenateFilesTask.value
-      val (jsFile, jsSourceMapFile) = concat(sourceFiles)
-      Optimize(
-        jsFile,
-        jsSourceMapFile,
-        targetName = moduleName.value + ".min",
-        targetDirectory = (target in optimizeFiles).value,
-        cacheDir = streams.value.cacheDirectory / "optimize-files")
-    }
-
 }

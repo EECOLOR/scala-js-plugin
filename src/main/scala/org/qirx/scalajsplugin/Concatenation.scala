@@ -23,17 +23,17 @@ trait Concatenation {
       val compiled = compile.value
       val sourceDirectory = classDirectory.value
       val sources = sourceDirectory ** GeneratedFile.jsFilter
-      val result = sources.get.sortBy(_.name)
-      result
+      sources.get.sortBy(_.name)
     },
 
     target in concatenateFiles := resourceManaged.value,
 
-    concatenateFiles := {
-      val sourceFiles = (sources in concatenateFiles).value
-      val concat = concatenateFilesTask.value
-      concat(sourceFiles)
-    },
+    concatenateFiles :=
+      GeneratedFiles.concat(
+        sourceFiles = (sources in concatenateFiles).value,
+        targetName = moduleName.value,
+        targetDirectory = (target in concatenateFiles).value,
+        cacheDir = streams.value.cacheDirectory / "concatenate-generated-files"),
 
     resourceGenerators <+=
       Def.taskDyn {
@@ -44,14 +44,4 @@ trait Concatenation {
         else Def.task { Seq.empty[File] }
       }
   )
-
-  def concatenateFilesTask =
-    Def.task { sourceFiles: Seq[File] =>
-      GeneratedFiles.concat(
-        sourceFiles,
-        targetName = moduleName.value,
-        targetDirectory = (target in concatenateFiles).value,
-        cacheDir = streams.value.cacheDirectory / "concatenate-generated-files")
-    }
-
 }

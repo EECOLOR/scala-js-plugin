@@ -9,6 +9,6 @@ sbtPlugin := true
 // needed to find the sbt-launch dependency (added by the scripted plugin
 resolvers += Resolver.url("Typesafe repository", url("http://repo.typesafe.com/typesafe/releases/"))(Resolver.ivyStylePatterns)
 
-libraryDependencies += "com.google.javascript" % "closure-compiler" % "v20130603"
+libraryDependencies += "com.google.javascript" % "closure-compiler" % "v20131014"
 
 scriptedBufferLog := false
